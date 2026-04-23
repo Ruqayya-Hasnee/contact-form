@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 type FormFields = {
@@ -9,61 +9,31 @@ type FormFields = {
   message: string;
 };
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export default function Home() {
-  const [form, setForm] = useState<FormFields>({
-    name: '',
-    email: '',
-    message: '',
-  });
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const validate = (): string => {
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      return 'All fields are required.';
-    }
-    if (!EMAIL_REGEX.test(form.email)) {
-      return 'Please enter a valid email address.';
-    }
-    return '';
-  };
-
-  const handleSubmit = async (e: React.BaseSyntheticEvent) => {
-    e.preventDefault();
-
-    const error = validate();
-    if (error) {
-      toast.error(error);
-      return;
-    }
-
-    setLoading(true);
-
+  const onSubmit = async (data: FormFields) => {
     try {
       const res = await fetch(process.env.NEXT_PUBLIC_API_URL!, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
 
       if (res.ok) {
         toast.success('Your message has been sent successfully!');
-        setForm({ name: '', email: '', message: '' });
+        reset();
       } else {
         toast.error('Something went wrong. Please try again.');
       }
     } catch {
       toast.error('Network error. Please check your connection.');
     }
-
-    setLoading(false);
   };
 
   return (
@@ -74,20 +44,22 @@ export default function Home() {
           Contact Us
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+
           <div className="flex flex-col gap-1.5">
             <label htmlFor="name" className="text-sm font-medium text-gray-700">
               Name
             </label>
             <input
               id="name"
-              name="name"
               type="text"
-              value={form.name}
-              onChange={handleChange}
               placeholder="Your name"
+              {...register('name', { required: 'Name is required.' })}
               className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
+            {errors.name && (
+              <span className="text-xs text-red-500">{errors.name.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -96,13 +68,20 @@ export default function Home() {
             </label>
             <input
               id="email"
-              name="email"
               type="email"
-              value={form.email}
-              onChange={handleChange}
               placeholder="you@example.com"
+              {...register('email', {
+                required: 'Email is required.',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Please enter a valid email address.',
+                },
+              })}
               className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
+            {errors.email && (
+              <span className="text-xs text-red-500">{errors.email.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -111,24 +90,25 @@ export default function Home() {
             </label>
             <textarea
               id="message"
-              name="message"
-              value={form.message}
-              onChange={handleChange}
               placeholder="Your message..."
               rows={4}
+              {...register('message', { required: 'Message is required.' })}
               className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
             />
+            {errors.message && (
+              <span className="text-xs text-red-500">{errors.message.message}</span>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-colors"
           >
-            {loading ? 'Submitting...' : 'Submit'}
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
-        </form>
 
+        </form>
       </div>
     </div>
   );
