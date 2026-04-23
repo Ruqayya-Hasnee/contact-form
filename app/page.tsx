@@ -8,12 +8,17 @@ type FormFields = {
   message: string;
 };
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function Home() {
   const [form, setForm] = useState<FormFields>({
     name: '',
     email: '',
     message: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,8 +26,29 @@ export default function Home() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.BaseSyntheticEvent) => {
+  const validate = (): string => {
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      return 'All fields are required.';
+    }
+    if (!EMAIL_REGEX.test(form.email)) {
+      return 'Please enter a valid email address.';
+    }
+    return '';
+  };
+
+  const handleSubmit = async (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
+
+    const error = validate();
+    if (error) {
+      setIsSuccess(false);
+      setStatus(error);
+      return;
+    }
+
+    setLoading(true);
+    setStatus('');
+    setLoading(false);
   };
 
   return (
@@ -81,11 +107,18 @@ export default function Home() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-colors"
           >
-            Submit
+            {loading ? 'Submitting...' : 'Submit'}
           </button>
         </form>
+
+        {status && (
+          <p className={`mt-4 text-sm font-medium text-center ${isSuccess ? 'text-green-600' : 'text-red-500'}`}>
+            {status}
+          </p>
+        )}
 
       </div>
     </div>
