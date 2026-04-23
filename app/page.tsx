@@ -48,6 +48,27 @@ export default function Home() {
 
     setLoading(true);
     setStatus('');
+
+    try {
+      const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      if (res.ok) {
+        setIsSuccess(true);
+        setStatus('Your message has been sent successfully!');
+        setForm({ name: '', email: '', message: '' });
+      } else {
+        setIsSuccess(false);
+        setStatus('Something went wrong. Please try again.');
+      }
+    } catch {
+      setIsSuccess(false);
+      setStatus('Network error. Please check your connection.');
+    }
+
     setLoading(false);
   };
 
