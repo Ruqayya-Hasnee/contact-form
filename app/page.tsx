@@ -134,7 +134,7 @@ export default function Home() {
                     <tr key={entry.key} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3 text-gray-800 text-center">{entry.name}</td>
                       <td className="px-4 py-3 text-gray-600 text-center">{entry.email}</td>
-                      <td className="px-4 py-3 text-gray-600 text-center">{entry.message}</td>
+                      <td className="px-4 py-3 text-gray-600 text-center max-w-xs truncate" title={entry.message}>{entry.message}</td>
                     </tr>
                   ))}
                 </tbody>
