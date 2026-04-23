@@ -124,9 +124,9 @@ export default function Home() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/4">Name</th>
-                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/4">Email</th>
-                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/2">Message</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/3">Name</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/3">Email</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/3">Message</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
