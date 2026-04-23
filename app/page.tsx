@@ -11,7 +11,7 @@ type FormFields = {
   message: string;
 };
 
-type Submission = FormFields & { id: number };
+type Submission = FormFields & { key: string };
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -28,8 +28,8 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await axios.post<Submission>(process.env.NEXT_PUBLIC_API_URL!, data);
-      setSubmissions((prev): Submission[] => [...prev, res.data]);
+      await axios.post(process.env.NEXT_PUBLIC_API_URL!, data);
+      setSubmissions((prev) => [...prev, { ...data, key: crypto.randomUUID() }]);
       toast.success('Form submitted successfully!');
       reset();
     } catch {
@@ -41,10 +41,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-12">
-      <div className="max-w-2xl mx-auto flex flex-col gap-8">
+      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8">
+        <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 max-w-md mx-auto w-full">
           <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
             Contact Us
           </h1>
@@ -119,24 +119,22 @@ export default function Home() {
         {/* Submissions Table */}
         {submissions.length > 0 && (
           <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Submitted Entries
-            </h2>
+
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="pb-3 pr-4 font-medium text-gray-500">Name</th>
-                    <th className="pb-3 pr-4 font-medium text-gray-500">Email</th>
-                    <th className="pb-3 font-medium text-gray-500">Message</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/4">Name</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/4">Email</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/2">Message</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {submissions.map((entry) => (
-                    <tr key={entry.id} className="border-b border-gray-100 last:border-0">
-                      <td className="py-3 pr-4 text-gray-800">{entry.name}</td>
-                      <td className="py-3 pr-4 text-gray-800">{entry.email}</td>
-                      <td className="py-3 text-gray-800">{entry.message}</td>
+                    <tr key={entry.key} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-gray-800 font-medium text-center">{entry.name}</td>
+                      <td className="px-4 py-3 text-gray-600 text-center">{entry.email}</td>
+                      <td className="px-4 py-3 text-gray-600 text-center">{entry.message}</td>
                     </tr>
                   ))}
                 </tbody>
