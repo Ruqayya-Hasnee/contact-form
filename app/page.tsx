@@ -132,7 +132,7 @@ export default function Home() {
                 <tbody className="divide-y divide-gray-100">
                   {submissions.map((entry) => (
                     <tr key={entry.key} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 text-gray-800 font-medium text-center">{entry.name}</td>
+                      <td className="px-4 py-3 text-gray-800 text-center">{entry.name}</td>
                       <td className="px-4 py-3 text-gray-600 text-center">{entry.email}</td>
                       <td className="px-4 py-3 text-gray-600 text-center">{entry.message}</td>
                     </tr>
