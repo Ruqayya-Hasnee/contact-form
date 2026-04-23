@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type FormFields = {
   name: string;
@@ -17,8 +18,6 @@ export default function Home() {
     message: '',
   });
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -41,13 +40,11 @@ export default function Home() {
 
     const error = validate();
     if (error) {
-      setIsSuccess(false);
-      setStatus(error);
+      toast.error(error);
       return;
     }
 
     setLoading(true);
-    setStatus('');
 
     try {
       const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
@@ -57,16 +54,13 @@ export default function Home() {
       });
 
       if (res.ok) {
-        setIsSuccess(true);
-        setStatus('Your message has been sent successfully!');
+        toast.success('Your message has been sent successfully!');
         setForm({ name: '', email: '', message: '' });
       } else {
-        setIsSuccess(false);
-        setStatus('Something went wrong. Please try again.');
+        toast.error('Something went wrong. Please try again.');
       }
     } catch {
-      setIsSuccess(false);
-      setStatus('Network error. Please check your connection.');
+      toast.error('Network error. Please check your connection.');
     }
 
     setLoading(false);
@@ -134,12 +128,6 @@ export default function Home() {
             {loading ? 'Submitting...' : 'Submit'}
           </button>
         </form>
-
-        {status && (
-          <p className={`mt-4 text-sm font-medium text-center ${isSuccess ? 'text-green-600' : 'text-red-500'}`}>
-            {status}
-          </p>
-        )}
 
       </div>
     </div>
