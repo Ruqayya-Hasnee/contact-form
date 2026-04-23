@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 type FormFields = {
   name: string;
@@ -10,30 +12,27 @@ type FormFields = {
 };
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormFields>();
 
   const onSubmit = async (data: FormFields) => {
-    try {
-      const res = await fetch(process.env.NEXT_PUBLIC_API_URL!, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+    setLoading(true);
 
-      if (res.ok) {
-        toast.success('Your message has been sent successfully!');
-        reset();
-      } else {
-        toast.error('Something went wrong. Please try again.');
-      }
+    try {
+      await axios.post(process.env.NEXT_PUBLIC_API_URL!, data);
+      toast.success('Form submitted successfully!');
+      reset();
     } catch {
-      toast.error('Network error. Please check your connection.');
+      toast.error('Something went wrong. Please try again.');
     }
+
+    setLoading(false);
   };
 
   return (
@@ -102,10 +101,10 @@ export default function Home() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-colors"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            {loading ? 'Submitting...' : 'Submit'}
           </button>
 
         </form>
