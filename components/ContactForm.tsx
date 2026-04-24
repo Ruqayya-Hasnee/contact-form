@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Card, Typography } from 'antd';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { useSubmissionsStore } from '../store/submissionsStore';
+import { useSubmissionsStore } from '@/store/submissionsStore';
 
 const { Title } = Typography;
 

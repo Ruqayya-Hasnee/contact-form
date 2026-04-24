@@ -1,8 +1,8 @@
 'use client';
 
+import { Submission } from '@/store/submissionsStore';
 import { Table, Card } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import type { Submission } from '../store/submissionsStore';
 
 const columns: ColumnsType<Submission> = [
   {
