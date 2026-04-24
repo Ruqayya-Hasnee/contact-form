@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Card, Typography } from 'antd';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -15,7 +16,9 @@ type FormFields = {
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [form] = Form.useForm<FormFields>();
+  const router = useRouter();
 
   const onFinish = async (values: FormFields) => {
     console.log('Form values:', values);
@@ -25,6 +28,7 @@ export default function ContactForm() {
       await axios.post(process.env.NEXT_PUBLIC_API_URL!, values);
       toast.success('Form submitted successfully!');
       form.resetFields();
+      setHasSubmitted(true);
     } catch {
       toast.error('Something went wrong. Please try again.');
     }
@@ -71,6 +75,15 @@ export default function ContactForm() {
             Submit
           </Button>
         </Form.Item>
+
+        <Button
+          block
+          size="large"
+          disabled={!hasSubmitted}
+          onClick={() => router.push('/users')}
+        >
+          View User List
+        </Button>
       </Form>
     </Card>
   );
