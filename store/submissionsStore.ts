@@ -1,10 +1,5 @@
 import { create } from 'zustand';
-import type { Submission } from './store.interface';
-
-type SubmissionsStore = {
-  submissions: Submission[];
-  addSubmission: (name: string, email: string, message: string) => void;
-};
+import type { SubmissionsStore } from './store.interface';
 
 export const useSubmissionsStore = create<SubmissionsStore>((set) => ({
   submissions: [],
