@@ -16,7 +16,7 @@ export default function Users() {
       <div className="max-w-4xl mx-auto flex flex-col gap-6">
 
         <div className="flex items-center justify-between">
-          <Title level={3} style={{ margin: 0 }}>User List</Title>
+          <Title level={3} className="m-0!">User List</Title>
           <button
             onClick={() => router.back()}
             className="text-sm text-blue-600 hover:underline"

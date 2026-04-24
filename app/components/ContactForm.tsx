@@ -33,9 +33,9 @@ export default function ContactForm() {
       form.resetFields();
     } catch {
       toast.error('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -77,16 +77,16 @@ export default function ContactForm() {
             Submit
           </Button>
         </Form.Item>
-
-        <Button
-          block
-          size="large"
-          disabled={submissions.length === 0}
-          onClick={() => router.push('/users')}
-        >
-          View User List
-        </Button>
       </Form>
+
+      <Button
+        block
+        size="large"
+        disabled={submissions.length === 0}
+        onClick={() => router.push('/users')}
+      >
+        View User List
+      </Button>
     </Card>
   );
 }
