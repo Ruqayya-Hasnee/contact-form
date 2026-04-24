@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Form, Input, Button, Table, Typography, Card } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import { toast } from 'sonner';
 import axios from 'axios';
+
+const { Title } = Typography;
 
 type FormFields = {
   name: string;
@@ -13,25 +16,39 @@ type FormFields = {
 
 type Submission = FormFields & { key: string };
 
+const columns: ColumnsType<Submission> = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'Message',
+    dataIndex: 'message',
+    key: 'message',
+    ellipsis: { showTitle: true },
+  },
+];
+
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [form] = Form.useForm<FormFields>();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormFields>();
-
-  const onSubmit = async (data: FormFields) => {
+  const onFinish = async (values: FormFields) => {
+    console.log('Form values:', values);
     setLoading(true);
 
     try {
-      await axios.post(process.env.NEXT_PUBLIC_API_URL!, data);
-      setSubmissions((prev) => [...prev, { ...data, key: crypto.randomUUID() }]);
+      await axios.post(process.env.NEXT_PUBLIC_API_URL!, values);
+      setSubmissions((prev) => [...prev, { ...values, key: crypto.randomUUID() }]);
       toast.success('Form submitted successfully!');
-      reset();
+      form.resetFields();
     } catch {
       toast.error('Something went wrong. Please try again.');
     }
@@ -40,107 +57,59 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
+    <div style={{ minHeight: '100vh', background: '#f5f5f5', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: '100%', maxWidth: 896, display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 max-w-md mx-auto w-full">
-          <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        <Card style={{ width: '100%', maxWidth: 448, margin: '0 auto' }} styles={{ body: { padding: '32px' } }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>
             Contact Us
-          </h1>
+          </Title>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="name" className="text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Your name"
-                {...register('name', { required: 'Name is required.' })}
-                className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              />
-              {errors.name && (
-                <span className="text-xs text-red-500">{errors.name.message}</span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                {...register('email', {
-                  required: 'Email is required.',
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Please enter a valid email address.',
-                  },
-                })}
-                className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              />
-              {errors.email && (
-                <span className="text-xs text-red-500">{errors.email.message}</span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="message" className="text-sm font-medium text-gray-700">
-                Message
-              </label>
-              <textarea
-                id="message"
-                placeholder="Your message..."
-                rows={4}
-                {...register('message', { required: 'Message is required.' })}
-                className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
-              />
-              {errors.message && (
-                <span className="text-xs text-red-500">{errors.message.message}</span>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-colors"
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: 'Name is required.' }]}
             >
-              {loading ? 'Submitting...' : 'Submit'}
-            </button>
+              <Input placeholder="Your name" size="large" />
+            </Form.Item>
 
-          </form>
-        </div>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: 'Email is required.' },
+                { type: 'email', message: 'Please enter a valid email address.' },
+              ]}
+            >
+              <Input placeholder="you@example.com" size="large" />
+            </Form.Item>
 
-        {/* Submissions Table */}
+            <Form.Item
+              name="message"
+              label="Message"
+              rules={[{ required: true, message: 'Message is required.' }]}
+            >
+              <Input.TextArea placeholder="Your message..." rows={4} />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading} block size="large">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
+
         {submissions.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8">
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/3">Name</th>
-                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/3">Email</th>
-                    <th className="px-4 py-3 font-semibold text-gray-600 text-center w-1/3">Message</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {submissions.map((entry) => (
-                    <tr key={entry.key} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 text-gray-800 text-center">{entry.name}</td>
-                      <td className="px-4 py-3 text-gray-600 text-center">{entry.email}</td>
-                      <td className="px-4 py-3 text-gray-600 text-center max-w-xs truncate" title={entry.message}>{entry.message}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Card>
+            <Table
+              columns={columns}
+              dataSource={submissions}
+              pagination={false}
+              scroll={{ x: true }}
+            />
+          </Card>
         )}
 
       </div>
