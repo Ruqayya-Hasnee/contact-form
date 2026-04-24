@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Toaster } from "sonner";
+import Providers from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,8 +17,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AntdRegistry>
-          {children}
-          <Toaster position="top-center" richColors />
+          <Providers>
+            {children}
+          </Providers>
         </AntdRegistry>
       </body>
     </html>

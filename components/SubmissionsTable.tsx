@@ -1,8 +1,9 @@
 'use client';
 
-import { Submission } from '@/store/submissionsStore';
 import { Table, Card } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { Submission } from '@/store/store.interface';
+import { useSubmissionsStore } from '@/store/submissionsStore';
 
 const columns: ColumnsType<Submission> = [
   {
@@ -22,18 +23,16 @@ const columns: ColumnsType<Submission> = [
   {
     title: 'Message',
     dataIndex: 'message',
-    width: 250,
     key: 'message',
+    width: 250,
     align: 'center',
     ellipsis: { showTitle: true },
   },
 ];
 
-type Props = {
-  submissions: Submission[];
-};
+export default function SubmissionsTable() {
+  const { submissions } = useSubmissionsStore();
 
-export default function SubmissionsTable({ submissions }: Props) {
   return (
     <Card>
       <Table

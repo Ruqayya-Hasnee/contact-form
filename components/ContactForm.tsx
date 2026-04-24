@@ -1,41 +1,36 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Form, Input, Button, Card, Typography } from 'antd';
-import { toast } from 'sonner';
+import { Form, Input, Button, Card, Typography, message } from 'antd';
 import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
 import { useSubmissionsStore } from '@/store/submissionsStore';
+import type { FormFields } from '@/store/store.interface';
 
 const { Title } = Typography;
 
-type FormFields = {
-  name: string;
-  email: string;
-  message: string;
-};
-
 export default function ContactForm() {
-  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm<FormFields>();
   const router = useRouter();
 
   const { submissions, addSubmission } = useSubmissionsStore();
 
-  const onFinish = async (values: FormFields) => {
-    console.log('Form values:', values);
-    setLoading(true);
-
-    try {
-      await axios.post(process.env.NEXT_PUBLIC_API_URL!, values);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (values: FormFields) =>
+      axios.post(process.env.NEXT_PUBLIC_API_URL!, values),
+    onSuccess: (_, values) => {
+      console.log('Form values:', values);
       addSubmission(values.name, values.email, values.message);
-      toast.success('Form submitted successfully!');
+      message.success('Form submitted successfully!');
       form.resetFields();
-    } catch {
-      toast.error('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    },
+    onError: () => {
+      message.error('Something went wrong. Please try again.');
+    },
+  });
+
+  const onFinish = (values: FormFields) => {
+    mutate(values);
   };
 
   return (
@@ -73,7 +68,7 @@ export default function ContactForm() {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading} block size="large">
+          <Button type="primary" htmlType="submit" loading={isPending} block size="large">
             Submit
           </Button>
         </Form.Item>

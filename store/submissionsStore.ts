@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-
-export type Submission = {
-  key: string;
-  name: string;
-  email: string;
-  message: string;
-};
+import type { Submission } from './store.interface';
 
 type SubmissionsStore = {
   submissions: Submission[];

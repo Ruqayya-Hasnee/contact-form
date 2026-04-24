@@ -1,16 +1,13 @@
 'use client';
 
-import SubmissionsTable from "@/components/SubmissionsTable";
-import { useSubmissionsStore } from "@/store/submissionsStore";
-import { Typography } from "antd";
-import { useRouter } from "next/navigation";
-
+import { useRouter } from 'next/navigation';
+import { Typography } from 'antd';
+import SubmissionsTable from '@/components/SubmissionsTable';
 
 const { Title } = Typography;
 
 export default function Users() {
   const router = useRouter();
-  const { submissions } = useSubmissionsStore();
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-12">
@@ -26,7 +23,7 @@ export default function Users() {
           </button>
         </div>
 
-        <SubmissionsTable submissions={submissions} />
+        <SubmissionsTable />
 
       </div>
     </div>
