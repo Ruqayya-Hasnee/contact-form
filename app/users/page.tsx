@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { Typography } from 'antd';
-import SubmissionsTable from '../components/SubmissionsTable';
-import { useSubmissionsStore } from '../store/submissionsStore';
+import SubmissionsTable from '../../components/SubmissionsTable';
+import { useSubmissionsStore } from '../../store/submissionsStore';
 
 const { Title } = Typography;
 
