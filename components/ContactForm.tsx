@@ -2,10 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
-import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useSubmissionsStore } from '@/store/submissionsStore';
 import type { FormFields } from '@/store/store.interface';
+import { submitContactForm } from '@/services/form.service';
+
 
 const { Title } = Typography;
 
@@ -16,8 +17,7 @@ export default function ContactForm() {
   const { submissions, addSubmission } = useSubmissionsStore();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (values: FormFields) =>
-      axios.post(process.env.NEXT_PUBLIC_API_URL!, values),
+    mutationFn: submitContactForm,
     onSuccess: (_, values) => {
       console.log('Form values:', values);
       addSubmission(values.name, values.email, values.message);
