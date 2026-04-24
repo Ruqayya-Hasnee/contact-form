@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
 import { useMutation } from '@tanstack/react-query';
 import { useSubmissionsStore } from '@/store/submissionsStore';
-import type { FormFields } from '@/store/store.interface';
 import { submitContactForm } from '@/services/form.service';
+import { FormFields } from '@/types/form.types';
 
 
 const { Title } = Typography;
