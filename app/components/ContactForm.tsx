@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Card, Typography } from 'antd';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useSubmissionsStore } from '../store/submissionsStore';
 
 const { Title } = Typography;
 
@@ -16,9 +17,10 @@ type FormFields = {
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [form] = Form.useForm<FormFields>();
   const router = useRouter();
+
+  const { submissions, addSubmission } = useSubmissionsStore();
 
   const onFinish = async (values: FormFields) => {
     console.log('Form values:', values);
@@ -26,9 +28,9 @@ export default function ContactForm() {
 
     try {
       await axios.post(process.env.NEXT_PUBLIC_API_URL!, values);
+      addSubmission(values.name, values.email, values.message);
       toast.success('Form submitted successfully!');
       form.resetFields();
-      setHasSubmitted(true);
     } catch {
       toast.error('Something went wrong. Please try again.');
     }
@@ -79,7 +81,7 @@ export default function ContactForm() {
         <Button
           block
           size="large"
-          disabled={!hasSubmitted}
+          disabled={submissions.length === 0}
           onClick={() => router.push('/users')}
         >
           View User List
