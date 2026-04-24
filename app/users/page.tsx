@@ -3,7 +3,7 @@
 import SubmissionsTable from "@/components/SubmissionsTable";
 import { useSubmissionsStore } from "@/store/submissionsStore";
 import { Typography } from "antd";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 
 const { Title } = Typography;
